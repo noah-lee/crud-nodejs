@@ -4,7 +4,6 @@ let { inventory } = require("./inventory");
 
 // Get all items in inventory
 const getItems = (req, res) => {
-  console.log("GET ALL ITEMS");
   try {
     // Filter out items tagged as deleted
     const filteredInventory = inventory.filter((item) => !item.deleted);
@@ -25,6 +24,7 @@ const getItems = (req, res) => {
 const getItem = (req, res) => {
   const { _id } = req.params;
   try {
+    // Find item with _id
     const item = inventory.find((item) => item._id === _id);
     if (item) {
       res.status(200).json({ status: 200, message: "success", data: item });
@@ -47,19 +47,21 @@ const getItem = (req, res) => {
 
 // Add item to inventory
 const addItem = (req, res) => {
-  console.log("ADD NEW ITEM");
   const { name } = req.body;
   try {
+    // Check if item with same name exists in inventory
     const exists = inventory.some(
       (item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase()
     );
     if (exists) {
+      // If item exists...
       res.status(400).json({
         satus: 400,
         message: "fail",
         data: `Item ${name} already exists in inventory.`,
       });
     } else {
+      // If item does not exist...
       const newItem = {
         _id: uuidv4(),
         ...req.body,
@@ -80,13 +82,50 @@ const addItem = (req, res) => {
   }
 };
 
+// Update item in inventory
+const updateItem = (req, res) => {
+  const { _id } = req.params;
+  const { name } = req.body;
+  try {
+    // Check if item with same name exists in inventory
+    const exists = inventory.some(
+      (item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+    );
+    if (exists) {
+      // If item exists...
+      res.status(400).json({
+        satus: 400,
+        message: "fail",
+        data: `Item ${name} already exists in inventory.`,
+      });
+    } else {
+      // If item does not exist...
+      inventory = inventory.map((item) => {
+        if (item._id === _id) {
+          return { _id, ...req.body };
+        } else {
+          return item;
+        }
+      });
+      res.status(201).json({ status: "201", message: "success" });
+    }
+  } catch (err) {
+    // Placeholder server error catcher
+    res.status(500).json({
+      status: 500,
+      message: "fail",
+      data: "Server error message",
+    });
+  }
+};
+
 // Delete item from inventory
 const deleteItem = (req, res) => {
   console.log("DELETE ITEM");
   const { _id } = req.params;
   const { comment } = req.body;
   try {
-    // Check if item with _id exists in inventory
+    // Check if item with same _id exists in inventory
     const exists = inventory.some((item) => item._id === _id);
     if (exists) {
       // If item exists...
@@ -99,7 +138,7 @@ const deleteItem = (req, res) => {
       });
       res.status(200).json({ status: "200", message: "success" });
     } else {
-      // If item does not exist
+      // If item does not exist...
       res.status(404).json({
         status: 404,
         message: "fail",
@@ -121,7 +160,7 @@ const undeleteItem = (req, res) => {
   console.log("UNDELETE ITEM");
   const { _id } = req.params;
   try {
-    // Check if item with _id exists in inventory
+    // Check if item with same _id exists in inventory
     const exists = inventory.some((item) => item._id === _id);
     if (exists) {
       // If item exists...
@@ -135,47 +174,12 @@ const undeleteItem = (req, res) => {
       });
       res.status(201).json({ status: "201", message: "success" });
     } else {
-      // If item does not exist
+      // If item does not exist...
       res.status(404).json({
         status: 404,
         message: "fail",
         data: `Item with id ${_id} not found.`,
       });
-    }
-  } catch (err) {
-    // Placeholder server error catcher
-    res.status(500).json({
-      status: 500,
-      message: "fail",
-      data: "Server error message",
-    });
-  }
-};
-
-// Update item in inventory
-const updateItem = (req, res) => {
-  console.log("UPDATE ITEM");
-  const { _id } = req.params;
-  const { name } = req.body;
-  try {
-    const exists = inventory.some(
-      (item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase()
-    );
-    if (exists) {
-      res.status(400).json({
-        satus: 400,
-        message: "fail",
-        data: `Item ${name} already exists in inventory.`,
-      });
-    } else {
-      inventory = inventory.map((item) => {
-        if (item._id === _id) {
-          return { _id, ...req.body };
-        } else {
-          return item;
-        }
-      });
-      res.status(201).json({ status: "201", message: "success" });
     }
   } catch (err) {
     // Placeholder server error catcher
