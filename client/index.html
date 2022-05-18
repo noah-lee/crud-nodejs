@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/client/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>CRUD</h1>
+    <h2>Inventory</h2>
+    <ul class="header-container">
+      <li class="header-item">Item</li>
+    </ul>
+    <form id="inventory-form">
+      <input
+        required
+        autocomplete="off"
+        type="text"
+        placeholder="Add item to inventory"
+        name="name"
+        id="inventory-form-name-input"
+      />
+      <input type="submit" value="Add" id="inventory-form-submit" />
+    </form>
+    <div id="inventory-list"></div>
+    <div>
+      <button id="undelete-btn" hidden>Undo Last Delete</button>
+      <button id="test-btn" hidden>Test</button>
+    </div>
+  </body>
+</html>
+<!-- <script src="/client/bundle.js"></script> -->
+<script src="/client/index.js"></script>
